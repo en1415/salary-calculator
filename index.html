@@ -1,0 +1,147 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>미용실 매출 정산 계산기</title>
+<style>
+body{
+    font-family: Arial, sans-serif;
+    background:#f4f6f8;
+    padding:20px;
+}
+.container{
+    max-width:420px;
+    margin:auto;
+    background:white;
+    padding:25px;
+    border-radius:12px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.08);
+}
+h2{
+    text-align:center;
+}
+label{
+    font-size:14px;
+    font-weight:bold;
+}
+input{
+    width:100%;
+    padding:10px;
+    margin:6px 0 14px 0;
+    border:1px solid #ddd;
+    border-radius:6px;
+    font-size:14px;
+}
+.percent{
+    display:flex;
+    gap:6px;
+}
+.percent input{
+    flex:1;
+}
+button{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:8px;
+    background:#2f80ed;
+    color:white;
+    font-size:16px;
+    font-weight:bold;
+}
+.result{
+    margin-top:20px;
+    font-size:20px;
+    font-weight:bold;
+    text-align:center;
+}
+.small{
+    font-size:13px;
+    color:#666;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>매출 정산 계산기</h2>
+
+<label>시술 실매출</label>
+<input id="realSales" type="number">
+
+<label>대체 매출</label>
+<input id="altSales" type="number">
+
+<label>정액권(선불지급시) 매출</label>
+<input id="ticketSales" type="number">
+
+<label>매출비율 (%)</label>
+<input id="ratio" type="number" value="35">
+
+<label>수수료 (%)</label>
+<input id="fee" type="number" value="10">
+
+<label>원천징수</label>
+<input type="text" value="3.3%" disabled class="small">
+
+<label>가불</label>
+<input id="advance" type="number">
+
+<label>점판</label>
+<input id="retail" type="number">
+
+<button onclick="calculate()">계산하기</button>
+
+<div class="result" id="result">
+최종급여: 0원
+</div>
+
+</div>
+
+<script>
+
+function num(v){
+    return Number(v) || 0
+}
+
+function calculate(){
+
+let realSales = num(document.getElementById('realSales').value)
+let altSales = num(document.getElementById('altSales').value)
+let ticketSales = num(document.getElementById('ticketSales').value)
+
+let ratio = num(document.getElementById('ratio').value) / 100
+let fee = num(document.getElementById('fee').value) / 100
+let taxRate = 0.033
+
+let advance = num(document.getElementById('advance').value)
+let retail = num(document.getElementById('retail').value)
+
+// 1 총매출
+let total = realSales + altSales + ticketSales
+
+// 2 매출비율 적용
+let afterRatio = total * ratio
+
+// 3 수수료 차감
+let afterFee = afterRatio - (afterRatio * fee)
+
+// 4 원천징수 차감
+let afterTax = afterFee - (afterFee * taxRate)
+
+// 5 가불 차감 + 점판 추가
+let finalPay = afterTax - advance + retail
+
+document.getElementById("result").innerText =
+"최종급여: " + Math.round(finalPay).toLocaleString() + "원"
+
+}
+
+</script>
+
+</body>
+</html>
